@@ -58,7 +58,8 @@ class Rules:
 
         print '\n'.join(self.rules)
 
-
+    def getContent(self):
+        return '\n'.join(self.rules)
             
     def header(self,rules):
         rules.append('''#!/usr/bin/make -f

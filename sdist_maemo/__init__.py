@@ -18,6 +18,9 @@ Implements the Distutils 'sdist_maemo' command.
 from distutils.core import Command
 from distutils.file_util import copy_file
 from rules import Rules
+from changelog import Changelog
+from control import Control
+from datetime import datetime
 
 import os
 
@@ -29,6 +32,8 @@ class sdist_maemo(Command):
     # name), and help string.
     user_options = [('name=', None,
                      "Package name"),
+                    ('buildversion=', None,
+                     "Package buildversion"),
                     ('section=', None,
                      "Section (Only 'user/*' will display in AI usually)"),
                     ('priority=', None,
@@ -37,6 +42,8 @@ class sdist_maemo(Command):
                      "Architecture"),
                     ('depends=', None,
                      "Other Debian package dependencies (comma separated)"),
+                    ('changelog=', None,
+                     "ChangeLog"), 
                     ('XSBC-Bugtracker=', None,
                      "URI of the bug tracker"),
                     ('XB-Maemo-Upgrade-Description=', None,
@@ -53,6 +60,10 @@ class sdist_maemo(Command):
                      "Pre remove script"),
                     ('preinst=', None,
                      "Pre install script"),
+                    ('XB-Maemo-Upgrade-Description=', None,
+                     "Upgrade description"),
+                    ('Suggests=', None,
+                     "Suggests dependancies"),
                    ]
 
     def initialize_options (self):
@@ -61,9 +72,13 @@ class sdist_maemo(Command):
         self.priority = None
         self.architecture = None
         self.depends = None
+        self.suggests = None
+        self.buildversion = None
+        self.changelog = None
         self.XB_Maemo_Icon_26 = None
         self.XB_Maemo_Display_Name = None
         self.XSBC_Bugtracker = None
+        self.XB_Maemo_Upgrade_Description = None
         self.postinst = None
         self.preinst = None
         self.prere = None
@@ -86,14 +101,24 @@ class sdist_maemo(Command):
                           (self.distribution.get_maintainer(),
                            self.distribution.get_maintainer_email())
 
+
         if self.depends is None:
             self.depends = "python2.5,"
 
+        if self.suggests is None:
+            self.suggests = ''
+
+        if self.changelog is None:
+            self.changelog = ""
+            
         self.name = self.distribution.get_name()
         self.description = self.distribution.get_description()
         self.long_description = self.distribution.get_long_description()
         self.version = self.distribution.get_version()
 
+        if self.buildversion is None:
+            self.buildversion = "1"
+            
         if self.XB_Maemo_Icon_26 is None:
             self.XB_Maemo_Icon_26 = ''
             
@@ -102,6 +127,9 @@ class sdist_maemo(Command):
             
         if self.XSBC_Bugtracker is None:
             self.XSBC_Bugtracker = ''
+        
+        if self.XB_Maemo_Upgrade_Description is None:
+            self.XB_Maemo_Upgrade_Description = ''
            
     def mkscript( name , dest ):
         if name and name.strip()!="":
@@ -143,12 +171,25 @@ class sdist_maemo(Command):
             for currFile in theFiles:
                 copy_file(currFile, fulldirpath)
 
-        #Create the debian required file
+        #Create the debian rules
         rules = Rules(self.name,DATA_DIR)
-        open(os.path.join(DEBIAN_DIR,"rules"),"w").write(rules)
+        dirs = rules.dirs
+        open(os.path.join(DEBIAN_DIR,"rules"),"w").write(rules.getContent())
         os.chmod(os.path.join(DEBIAN_DIR,"rules"),0755)
-         
-        #Script
+
+        #Create the debian compat
+        open(os.path.join(DEBIAN_DIR,"compat"),"w").write("5\n")
+          
+        #Create the debian dirs
+        open(os.path.join(DEBIAN_DIR,"dirs"),"w").write("\n".join(dirs))
+                 
+        #Create the debian changelog
+        d=datetime.now()
+        self.buildDate=d.strftime("%a, %d %b %Y %H:%M:%S +0000")
+        clog = Changelog(self.name,self.version,self.buildversion,self.changelog,self.distribution.get_maintainer(),self.distribution.get_maintainer_email(),self.buildDate)
+        open(os.path.join(DEBIAN_DIR,"changelog"),"w").write(clog.getContent())
+          
+        #Create the pre/post inst/rm Script
         if self.preinst is not None:
             mkscript(self.preinst ,os.path.join(DEBIAN_DIR,"preinst"))
         if self.postinst is not None:
@@ -157,6 +198,24 @@ class sdist_maemo(Command):
             mkscript(self.prere  ,os.path.join(DEBIAN_DIR,"prerm"))
         if self.postre is not None:
             mkscript(self.postre ,os.path.join(DEBIAN_DIR,"postrm"))
+
+        #Create the control file
+        control = Control(self.name,
+                    self.section,
+                    self.distribution.get_maintainer(),
+                    self.distribution.get_maintainer_email(),
+                    self.XB_Maemo_Display_Name,
+                    self.architecture,
+                    self.depends,
+                    self.suggests,
+                    self.description,
+                    self.long_description,
+                    self.XB_Maemo_Upgrade_Description,
+                    self.XSBC_Bugtracker,
+                    self.XB_Maemo_Icon_26,
+                    )
+        open(os.path.join(DEBIAN_DIR,"control"),"w").write(control.getContent())
+
          
          
 
