@@ -24,7 +24,7 @@ from datetime import datetime
 from licence import Licence
 from changes import Changes
 from dsc import Dsc
-
+import time
 import os
 
 class sdist_maemo(Command):
@@ -89,6 +89,8 @@ class sdist_maemo(Command):
         self.preinst = None
         self.prere = None
         self.postre = None
+        self.repository = None
+        self.urgency = None
         
     def finalize_options (self):
         if self.dist_dir is None:
@@ -125,6 +127,12 @@ class sdist_maemo(Command):
         self.long_description = self.distribution.get_long_description()
         self.version = self.distribution.get_version()
 
+        if self.repository is None:
+            self.repository = 'Extras'
+
+        if self.urgency is None:
+            self.urgency = 'low'
+            
         if self.buildversion is None:
             self.buildversion = "1"
             
@@ -244,8 +252,8 @@ class sdist_maemo(Command):
         tar.close()
 
         #Clean the build dir in dist
-        os.rmdir(DEBIAN_DIR)
-        os.rmdir(DATA_DIR)
+        #os.rmdir(DEBIAN_DIR)
+        #os.rmdir(DATA_DIR)
         
         #Create the Dsc file
         import locale

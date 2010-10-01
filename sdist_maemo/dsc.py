@@ -38,7 +38,7 @@ class Dsc(object):
         content.append('Files:')
 
         for onefile in self.files:
-            md5=ppkg_md5hash.md5sum(onefile)
+            md5=md5hash.md5sum(onefile)
             size=os.stat(onefile).st_size.__str__()
             content.append(' '+md5 + ' ' + size +' '+os.path.basename(onefile))
 
