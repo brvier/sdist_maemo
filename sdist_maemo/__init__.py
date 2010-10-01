@@ -17,6 +17,7 @@ Implements the Distutils 'sdist_maemo' command.
 
 from distutils.core import Command
 from distutils.file_util import copy_file
+from distutils.dir_util import copy_tree, remove_tree
 from rules import Rules
 from changelog import Changelog
 from control import Control
@@ -174,19 +175,31 @@ class sdist_maemo(Command):
             os.makedirs(os.path.join(DATA_DIR,'usr','bin'))
         except StandardError,e: # TODO: Check exception is exists
             print e
-            
-        for script in self.distribution.scripts:
-            copy_file(script, os.path.join(DATA_DIR,'usr','bin'))
 
-        for theDir, theFiles in self.distribution.data_files:
-            fulldirpath = os.path.join(DATA_DIR,'usr', theDir)
-            try:
-                os.makedirs(fulldirpath)
-            except: # TODO: Check exception is exists
-                pass
+        if self.distribution.scripts is not None:
+            for script in self.distribution.scripts:
+                copy_file(script, os.path.join(DATA_DIR,'usr','bin'))
 
-            for currFile in theFiles:
-                copy_file(currFile, fulldirpath)
+        if self.distribution.data_files is not None:
+            for theDir, theFiles in self.distribution.data_files:
+                fulldirpath = os.path.join(DATA_DIR,'usr', theDir)
+                try:
+                    os.makedirs(fulldirpath)
+                except: # TODO: Check exception is exists
+                    pass
+    
+                for currFile in theFiles:
+                    copy_file(currFile, fulldirpath)
+
+        if self.distribution.packages is not None:
+            for package in self.distribution.packages:
+                fulldirpath = os.path.join(DATA_DIR,'usr','lib','python2.5','site-packages')
+                try:
+                    os.makedirs(fulldirpath)
+                except: # TODO: Check exception is exists
+                    pass
+    
+                copy_tree(package, fulldirpath)
 
         #Create the debian rules
         rules = Rules(self.name,DATA_DIR)
@@ -252,8 +265,8 @@ class sdist_maemo(Command):
         tar.close()
 
         #Clean the build dir in dist
-        #os.rmdir(DEBIAN_DIR)
-        #os.rmdir(DATA_DIR)
+        remove_tree(DEBIAN_DIR)
+        remove_tree(DATA_DIR)
         
         #Create the Dsc file
         import locale

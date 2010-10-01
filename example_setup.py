@@ -1,13 +1,13 @@
 #
 # example_setup.py
 #
-# Example use of 'bdist_maemo' command.
+# Example use of 'sdist_maemo' command.
 #
-#  Author: follower@rancidbacon.com
+#  Author: khertan@khertan.net
 #
-#    Date: 15 September 2006
+#    Date: 1 October 2010
 #
-# License: BSD
+# License: GPLv3
 #
 
 from sdist_maemo import sdist_maemo as _sdist_maemo

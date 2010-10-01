@@ -16,7 +16,7 @@ import os
 import sys
 
 class Control:
-    def __init__(self,name,section,author,email,display_name,arch,
+    def __init__(self,name,section,maintainer,email,display_name,arch,
                     depends,suggests,description,long_description,
                     upgrade_description,
                     bugtracker,
@@ -26,7 +26,7 @@ class Control:
         self.control="""Source: %(name)s
 Section: %(section)s
 Priority: extra
-Maintainer: %(author)s <%(email)s>
+Maintainer: %(maintainer)s <%(email)s>
 Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
 
@@ -41,7 +41,7 @@ XB-Maemo-Upgrade-Description: %(upgrade_description)s
 XSBC-Bugtracker: %(bugtracker)s
 XB-Maemo-Icon26: %(iconb64)s""" % {'name':name,
                     'section':section,
-                    'author':author,
+                    'maintainer':maintainer,
                     'email':email,
                     'display_name':display_name,
                     'arch':arch,
