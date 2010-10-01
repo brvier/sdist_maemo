@@ -53,5 +53,4 @@ class Changes(object):
             size=os.stat(onefile).st_size.__str__()
             content.append(' ' + md5 + ' ' + size + ' ' + self.category +' '+self.repository+' '+os.path.basename(onefile))
 
-        print "\n".join(content) + "\n"
         return "\n".join(content) + "\n\n"
