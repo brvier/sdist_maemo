@@ -49,7 +49,7 @@ class Rules:
                 #print root,dirs,f                
                 #print fpath
                 self.rules.append('\tmkdir -p "$(CURDIR)/debian/%s/%s"' % (self.package_name,fpath))
-                self.rules.append('\tcp -a "%s" "$(CURDIR)/debian/%s/%s"' % (os.path.join(fpath,f),self.package_name,os.path.join(fpath,f)))
+                self.rules.append('\tcp -a "%s" "$(CURDIR)/%s"' % (os.path.join(self.package_name,fpath,f),os.path.join('debian',self.package_name,fpath,f)))
         
             # append a dir
             self.dirs.append(fpath)

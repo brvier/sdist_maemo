@@ -66,6 +66,8 @@ class sdist_maemo(Command):
                      "Pre install script"),
                     ('Suggests=', None,
                      "Suggests dependancies"),
+                    ('Replaces=', None,
+                     "Replaces package"),
                     ('copyright=', None,
                      "Licence copyright"),
                    ]
