@@ -21,6 +21,9 @@ from rules import Rules
 from changelog import Changelog
 from control import Control
 from datetime import datetime
+from licence import Licence
+from changes import Changes
+from dsc import Dsc
 
 import os
 
@@ -64,12 +67,15 @@ class sdist_maemo(Command):
                      "Upgrade description"),
                     ('Suggests=', None,
                      "Suggests dependancies"),
+                    ('copyright=', None,
+                     "Licence copyright"),
                    ]
 
     def initialize_options (self):
         self.dist_dir = None
         self.section = None
         self.priority = None
+        self.copyright = None
         self.architecture = None
         self.depends = None
         self.suggests = None
@@ -107,6 +113,9 @@ class sdist_maemo(Command):
 
         if self.suggests is None:
             self.suggests = ''
+
+        if self.copyright is None:
+            self.copyright = 'gpl'
 
         if self.changelog is None:
             self.changelog = ""
@@ -216,7 +225,75 @@ class sdist_maemo(Command):
                     )
         open(os.path.join(DEBIAN_DIR,"control"),"w").write(control.getContent())
 
+        #Create the debian licence file
+        licence = Licence(self.copyright,
+                          self.distribution.get_maintainer(),
+                          self.distribution.get_maintainer_email(),
+                          self.buildDate,
+                          str(datetime.now().year))
+        open(os.path.join(DEBIAN_DIR,"copyright"),"w").write(licence.getContent())
          
-         
+        #Now create the tar.gz
+        import tarfile
+        def reset(tarinfo):
+            tarinfo.uid = tarinfo.gid = 0
+            tarinfo.uname = tarinfo.gname = "root"
+            return tarinfo
+        tar = tarfile.open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.tar.gz'), 'w:gz')
+        tar.add(self.dist_dir,'.')
+        tar.close()
 
+        #Clean the build dir in dist
+        os.rmdir(DEBIAN_DIR)
+        os.rmdir(DATA_DIR)
         
+        #Create the Dsc file
+        import locale
+        import commands
+        try:
+            old_locale,iso=locale.getlocale(locale.LC_TIME)
+            locale.setlocale(locale.LC_TIME,'en_US')
+        except:
+            pass
+        dsccontent = Dsc("%s-%s"%(self.version,self.buildversion),
+                     self.depends,
+                     (os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.tar.gz'),),
+                     Format='1.0',
+                     Source=self.name,
+                     Version="%s-%s"%(self.version,self.buildversion),
+                     Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email()),                             
+                     Architecture="%s"%self.architecture,
+                    )
+        f = open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.dsc'),"wb")
+        f.write(dsccontent._getContent())
+        f.close()
+
+        #Changes file
+        changescontent = Changes(
+                        "%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email()),
+                        "%s"%self.description,
+                        "%s"%self.changelog,
+                        (
+                                 "%s.tar.gz"%os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion),
+                                 "%s.dsc"%os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion),
+                          ),
+                          "%s"%self.section,
+                          "%s"%self.repository,
+                          Format='1.7',
+                          Date=time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()),
+                          Source="%s"%self.name,
+                          Architecture="%s"%self.architecture,
+                          Version="%s-%s"%(self.version,self.buildversion),
+                          Distribution="%s"%self.distribution,
+                          Urgency="%s"%self.urgency,
+                          Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email())                           
+                          )
+
+        f = open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.changes'),"wb")
+        f.write(changescontent.getContent())
+        f.close()
+        try:
+            locale.setlocale(locale.LC_TIME,old_locale)
+        except:
+            pass
+
