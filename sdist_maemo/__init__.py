@@ -136,6 +136,15 @@ class sdist_maemo(Command):
         self.name = self.distribution.get_name()
         self.description = self.distribution.get_description()
         self.long_description = self.distribution.get_long_description()
+
+        #clean description (add a space before each next lines)
+        self.description=self.description.replace("\r","").strip()
+        self.description = "\n ".join(self.description.split("\n"))
+
+        #clean long_description (add a space before each next lines)
+        self.long_description=self.long_description.replace("\r","").strip()
+        self.long_description = "\n ".join(self.long_description.split("\n"))
+
         self.version = self.distribution.get_version()
 
         if self.repository is None:
@@ -158,6 +167,10 @@ class sdist_maemo(Command):
         
         if self.XB_Maemo_Upgrade_Description is None:
             self.XB_Maemo_Upgrade_Description = ''
+
+        #clean long_description (add a space before each next lines)
+        self.XB_Maemo_Upgrade_Description=self.XB_Maemo_Upgrade_Description.replace("\r","").strip()
+        self.XB_Maemo_Upgrade_Description = "\n ".join(self.XB_Maemo_Upgrade_Description.split("\n"))
            
     def mkscript( name , dest ):
         if name and name.strip()!="":
