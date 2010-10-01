@@ -39,7 +39,7 @@ class Rules:
         
         self.header(self.rules)
         
-        self.rules.append('mkdir -p "$(CURDIR)/debian/%s"' % self.package_name)
+        self.rules.append('\tmkdir -p "$(CURDIR)/debian/%s"' % self.package_name)
         for root, dirs, fs in os.walk(self.origin_dir):
             fpath = relpath(root,self.origin_dir)
             
@@ -48,8 +48,8 @@ class Rules:
                 # and one for copying the file
                 #print root,dirs,f                
                 #print fpath
-                self.rules.append('mkdir -p "$(CURDIR)/debian/%s/%s"' % (self.package_name,fpath))
-                self.rules.append('cp -a "%s" "$(CURDIR)/debian/%s/%s"' % (os.path.join(fpath,f),self.package_name,os.path.join(fpath,f)))
+                self.rules.append('\tmkdir -p "$(CURDIR)/debian/%s/%s"' % (self.package_name,fpath))
+                self.rules.append('\tcp -a "%s" "$(CURDIR)/debian/%s/%s"' % (os.path.join(fpath,f),self.package_name,os.path.join(fpath,f)))
         
             # append a dir
             self.dirs.append(fpath)
@@ -105,7 +105,7 @@ install: build
 	# ======================================================''')
     
     def footer(self,rules):
-        rules.append('''	# ======================================================
+        rules.append('''\t# ======================================================
 
 # Build architecture-independent files here.
 binary-indep: build install

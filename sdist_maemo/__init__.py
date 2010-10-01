@@ -50,10 +50,10 @@ class sdist_maemo(Command):
                      "ChangeLog"), 
                     ('XSBC-Bugtracker=', None,
                      "URI of the bug tracker"),
-                    ('XB-Maemo-Upgrade-Description=', None,
-                     "Upgrade description"),
                     ('XB-Maemo-Display-Name=', None,
                      "Display name"),
+                    ('XB-Maemo-Upgrade-Description=', None,
+                     "Upgrade description"),
                     ('XB-Maemo-Icon-26=', None,
                      "Maemo package icon"),
                     ('postinst=', None,
@@ -64,8 +64,6 @@ class sdist_maemo(Command):
                      "Pre remove script"),
                     ('preinst=', None,
                      "Pre install script"),
-                    ('XB-Maemo-Upgrade-Description=', None,
-                     "Upgrade description"),
                     ('Suggests=', None,
                      "Suggests dependancies"),
                     ('copyright=', None,
@@ -73,6 +71,8 @@ class sdist_maemo(Command):
                    ]
 
     def initialize_options (self):
+    
+        
         self.dist_dir = None
         self.section = None
         self.priority = None
@@ -265,8 +265,8 @@ class sdist_maemo(Command):
         tar.close()
 
         #Clean the build dir in dist
-        remove_tree(DEBIAN_DIR)
-        remove_tree(DATA_DIR)
+#        remove_tree(DEBIAN_DIR)
+#        remove_tree(DATA_DIR)
         
         #Create the Dsc file
         import locale
@@ -305,7 +305,7 @@ class sdist_maemo(Command):
                           Source="%s"%self.name,
                           Architecture="%s"%self.architecture,
                           Version="%s-%s"%(self.version,self.buildversion),
-                          Distribution="%s"%self.distribution,
+                          Distribution="%s"%self.repository,
                           Urgency="%s"%self.urgency,
                           Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email())                           
                           )
