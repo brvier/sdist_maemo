@@ -56,7 +56,7 @@ XB-Maemo-Icon26: %(iconb64)s""" % {'name':name,
                     'upgrade_description':upgrade_description,
                     'bugtracker':bugtracker,
                     'conflicts':conflicts,
-                    'replacs':replaces,
+                    'replaces':replaces,
                     'iconb64':self.iconb64}
 
     def getContent(self):

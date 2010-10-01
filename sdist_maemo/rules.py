@@ -56,8 +56,6 @@ class Rules:
             
         self.footer(self.rules)
 
-        print '\n'.join(self.rules)
-
     def getContent(self):
         return '\n'.join(self.rules)
             

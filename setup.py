@@ -26,8 +26,8 @@ setup(name='python-sdist-maemo',
       'depends':'python2.5, python-setuptools',
       'XSBC_Bugtracker':'http://khertan.net/sdict_maemo:bugs',
       'XB_Maemo_Display_Name':'Python sdist_maemo',
-      'XB_Maemo_Icon26':''
-      }}
+      'XB_Maemo_Icon_26':''
+      'copyright':'gpl'}}
       
       )
 
