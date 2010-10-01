@@ -20,7 +20,9 @@ class Control:
                     depends,suggests,description,long_description,
                     upgrade_description,
                     bugtracker,
-                    icon,):       
+                    icon,
+                    conflicts,
+                    replaces):       
 
         self.getIconContent(icon)
         self.control="""Source: %(name)s
@@ -35,6 +37,8 @@ XB-Maemo-Display-Name: %(display_name)s
 Architecture: %(arch)s
 Depends: %(depends)s
 Suggests: %(suggests)s
+Conflicts: %(conflicts)s
+Replaces: %(replaces)s
 Description: %(description)s
 Long-Description: %(long_description)s
 XB-Maemo-Upgrade-Description: %(upgrade_description)s
@@ -51,6 +55,8 @@ XB-Maemo-Icon26: %(iconb64)s""" % {'name':name,
                     'long_description':long_description,
                     'upgrade_description':upgrade_description,
                     'bugtracker':bugtracker,
+                    'conflicts':conflicts,
+                    'replacs':replaces,
                     'iconb64':self.iconb64}
 
     def getContent(self):

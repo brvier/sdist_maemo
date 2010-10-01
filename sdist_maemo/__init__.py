@@ -68,6 +68,8 @@ class sdist_maemo(Command):
                      "Suggests dependancies"),
                     ('Replaces=', None,
                      "Replaces package"),
+                    ('Conflicts=', None,
+                     "COnflicts package"),
                     ('copyright=', None,
                      "Licence copyright"),
                    ]
@@ -118,6 +120,12 @@ class sdist_maemo(Command):
 
         if self.suggests is None:
             self.suggests = ''
+            
+        if self.conflicts is None:
+            self.conflicts = ''
+
+        if self.replaces is None:
+            self.replaces = ''
 
         if self.copyright is None:
             self.copyright = 'gpl'
@@ -245,6 +253,8 @@ class sdist_maemo(Command):
                     self.XB_Maemo_Upgrade_Description,
                     self.XSBC_Bugtracker,
                     self.XB_Maemo_Icon_26,
+                    self.conflicts,
+                    self.replaces,
                     )
         open(os.path.join(DEBIAN_DIR,"control"),"w").write(control.getContent())
 
