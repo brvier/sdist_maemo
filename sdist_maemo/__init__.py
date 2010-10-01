@@ -132,6 +132,10 @@ class sdist_maemo(Command):
 
         if self.changelog is None:
             self.changelog = ""
+
+        #clean changelog (add 2 spaces before each next lines)
+        self.changelog=self.changelog.replace("\r","").strip()
+        self.changelog = "\n  ".join(self.changelog.split("\n"))
             
         self.name = self.distribution.get_name()
         self.description = self.distribution.get_description()
