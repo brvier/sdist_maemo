@@ -8,7 +8,7 @@ from sdist_maemo import sdist_maemo as _sdist_maemo
 from distutils.core import setup
 
 setup(name='python-sdist-maemo',
-      version='0.0.2',
+      version='0.0.4',
       
       license='GNU GPLv3',
       description='A distutil extension to build maemo source package.',

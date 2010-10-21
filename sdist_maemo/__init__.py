@@ -34,7 +34,7 @@ class sdist_maemo(Command):
     ARCHS="all any armel i386 ia64 alpha amd64 armeb arm hppa m32r m68k mips mipsel powerpc ppc64 s390 s390x sh3 sh3eb sh4 sh4eb sparc darwin-i386 darwin-ia64 darwin-alpha darwin-amd64 darwin-armeb darwin-arm darwin-hppa darwin-m32r darwin-m68k darwin-mips darwin-mipsel darwin-powerpc darwin-ppc64 darwin-s390 darwin-s390x darwin-sh3 darwin-sh3eb darwin-sh4 darwin-sh4eb darwin-sparc freebsd-i386 freebsd-ia64 freebsd-alpha freebsd-amd64 freebsd-armeb freebsd-arm freebsd-hppa freebsd-m32r freebsd-m68k freebsd-mips freebsd-mipsel freebsd-powerpc freebsd-ppc64 freebsd-s390 freebsd-s390x freebsd-sh3 freebsd-sh3eb freebsd-sh4 freebsd-sh4eb freebsd-sparc kfreebsd-i386 kfreebsd-ia64 kfreebsd-alpha kfreebsd-amd64 kfreebsd-armeb kfreebsd-arm kfreebsd-hppa kfreebsd-m32r kfreebsd-m68k kfreebsd-mips kfreebsd-mipsel kfreebsd-powerpc kfreebsd-ppc64 kfreebsd-s390 kfreebsd-s390x kfreebsd-sh3 kfreebsd-sh3eb kfreebsd-sh4 kfreebsd-sh4eb kfreebsd-sparc knetbsd-i386 knetbsd-ia64 knetbsd-alpha knetbsd-amd64 knetbsd-armeb knetbsd-arm knetbsd-hppa knetbsd-m32r knetbsd-m68k knetbsd-mips knetbsd-mipsel knetbsd-powerpc knetbsd-ppc64 knetbsd-s390 knetbsd-s390x knetbsd-sh3 knetbsd-sh3eb knetbsd-sh4 knetbsd-sh4eb knetbsd-sparc netbsd-i386 netbsd-ia64 netbsd-alpha netbsd-amd64 netbsd-armeb netbsd-arm netbsd-hppa netbsd-m32r netbsd-m68k netbsd-mips netbsd-mipsel netbsd-powerpc netbsd-ppc64 netbsd-s390 netbsd-s390x netbsd-sh3 netbsd-sh3eb netbsd-sh4 netbsd-sh4eb netbsd-sparc openbsd-i386 openbsd-ia64 openbsd-alpha openbsd-amd64 openbsd-armeb openbsd-arm openbsd-hppa openbsd-m32r openbsd-m68k openbsd-mips openbsd-mipsel openbsd-powerpc openbsd-ppc64 openbsd-s390 openbsd-s390x openbsd-sh3 openbsd-sh3eb openbsd-sh4 openbsd-sh4eb openbsd-sparc hurd-i386 hurd-ia64 hurd-alpha hurd-amd64 hurd-armeb hurd-arm hurd-hppa hurd-m32r hurd-m68k hurd-mips hurd-mipsel hurd-powerpc hurd-ppc64 hurd-s390 hurd-s390x hurd-sh3 hurd-sh3eb hurd-sh4 hurd-sh4eb hurd-sparc".split(" ")
     LICENSES=["gpl","lgpl","bsd","artistic","shareware"]
 
-    __version__ = '0.0.2'
+    __version__ = '0.0.4'
     
     # Brief (40-50 characters) description of the command
     description = "Maemo source package"
@@ -194,7 +194,7 @@ class sdist_maemo(Command):
         self.XB_Maemo_Upgrade_Description=self.XB_Maemo_Upgrade_Description.replace("\r","").strip()
         self.XB_Maemo_Upgrade_Description = "\n ".join(self.XB_Maemo_Upgrade_Description.split("\n"))
            
-    def mkscript( name , dest ):
+    def mkscript(self, name , dest ):
         if name and name.strip()!="":
             if (os.path.isfile(name)):# or (os.path.isfile(os.path.join(CURRENT,name))):    # it's a file
                 content = file(name).read()
@@ -229,7 +229,7 @@ class sdist_maemo(Command):
             for theDir, theFiles in self.distribution.data_files:
                 if theDir.startswith('/'):
                     theDir = theDir[1:]
-                fulldirpath = os.path.join(DATA_DIR,'usr', theDir)
+                fulldirpath = os.path.join(DATA_DIR, theDir)
                 try:
                     os.makedirs(fulldirpath)
                 except: # TODO: Check exception is exists
@@ -244,9 +244,8 @@ class sdist_maemo(Command):
                 try:
                     os.makedirs(fulldirpath)
                 except: # TODO: Check exception is exists
-                    pass
-    
-                copy_tree(package, fulldirpath)
+                    pass    
+                copy_tree(package, fulldirpath)                
 
         #Create the debian rules
         rules = Rules(self.name,DATA_DIR)
@@ -268,13 +267,13 @@ class sdist_maemo(Command):
           
         #Create the pre/post inst/rm Script
         if self.preinst is not None:
-            mkscript(self.preinst ,os.path.join(DEBIAN_DIR,"preinst"))
+            self.mkscript(self.preinst ,os.path.join(DEBIAN_DIR,"preinst"))
         if self.postinst is not None:
-            mkscript(self.postinst,os.path.join(DEBIAN_DIR,"postinst"))
+            self.mkscript(self.postinst,os.path.join(DEBIAN_DIR,"postinst"))
         if self.prere is not None:
-            mkscript(self.prere  ,os.path.join(DEBIAN_DIR,"prerm"))
+            self.mkscript(self.prere  ,os.path.join(DEBIAN_DIR,"prerm"))
         if self.postre is not None:
-            mkscript(self.postre ,os.path.join(DEBIAN_DIR,"postrm"))
+            self.mkscript(self.postre ,os.path.join(DEBIAN_DIR,"postrm"))
 
         #Create the control file
         control = Control(self.name,
@@ -302,14 +301,19 @@ class sdist_maemo(Command):
                           self.buildDate,
                           str(datetime.now().year))
         open(os.path.join(DEBIAN_DIR,"copyright"),"w").write(licence.getContent())
-         
+
+        #Delete tar if already exist as it will made add to the same tar
+        tarpath = os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.tar.gz')
+        if os.path.exists(tarpath):
+            os.remove(tarpath)
+            
         #Now create the tar.gz
         import tarfile
         def reset(tarinfo):
             tarinfo.uid = tarinfo.gid = 0
             tarinfo.uname = tarinfo.gname = "root"
             return tarinfo
-        tar = tarfile.open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.tar.gz'), 'w:gz')
+        tar = tarfile.open(tarpath, 'w:gz')
         tar.add(self.dist_dir,'.')
         tar.close()
 
