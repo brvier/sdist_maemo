@@ -43,7 +43,7 @@ Description: %(description)s
 Long-Description: %(long_description)s
 XB-Maemo-Upgrade-Description: %(upgrade_description)s
 XSBC-Bugtracker: %(bugtracker)s
-XB-Maemo-Icon26: %(iconb64)s""" % {'name':name,
+XB-Maemo-Icon26:%(iconb64)s""" % {'name':name,
                     'section':section,
                     'maintainer':maintainer,
                     'email':email,
@@ -60,13 +60,14 @@ XB-Maemo-Icon26: %(iconb64)s""" % {'name':name,
                     'iconb64':self.iconb64}
 
     def getContent(self):
+        print self.control
         return self.control
 
     def getIconContent(self,icon):
         try:
           import base64
-          iconb64 = "\n ".join(base64.encodestring(open(icon).read()).split("\n")[0:-1])
-          self.iconb64 = "\n %s" % ( iconb64 )
+          iconb64 = "\n  ".join(base64.encodestring(open(icon).read()).split("\n")[0:-1])
+          self.iconb64 = "\n  %s" % ( iconb64 )
         except:
           self.iconb64 = ''            
     
