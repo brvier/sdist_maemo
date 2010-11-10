@@ -39,8 +39,7 @@ Depends: %(depends)s
 Suggests: %(suggests)s
 Conflicts: %(conflicts)s
 Replaces: %(replaces)s
-Description: %(description)s
-Long-Description: %(long_description)s
+Description: %(long_description)s
 XB-Maemo-Upgrade-Description: %(upgrade_description)s
 XSBC-Bugtracker: %(bugtracker)s
 XB-Maemo-Icon26:%(iconb64)s""" % {'name':name,
