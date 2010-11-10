@@ -66,8 +66,8 @@ XB-Maemo-Icon26:%(iconb64)s""" % {'name':name,
     def getIconContent(self,icon):
         try:
           import base64
-          iconb64 = "\n  ".join(base64.encodestring(open(icon).read()).split("\n")[0:-1])
-          self.iconb64 = "\n  %s" % ( iconb64 )
+          iconb64 = "\n ".join(base64.encodestring(open(icon).read()).split("\n")[0:-1])
+          self.iconb64 = "\n %s" % ( iconb64 )
         except:
           self.iconb64 = ''            
     

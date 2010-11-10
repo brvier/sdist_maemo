@@ -8,7 +8,7 @@ from sdist_maemo import sdist_maemo as _sdist_maemo
 from distutils.core import setup
 
 setup(name='python-sdist-maemo',
-      version='0.0.5',
+      version='0.0.6',
       
       license='GNU GPLv3',
       description='A distutil extension to build maemo source package.',
@@ -27,6 +27,7 @@ setup(name='python-sdist-maemo',
       'XSBC_Bugtracker':'http://khertan.net/sdict_maemo:bugs',
       'XB_Maemo_Display_Name':'Python sdist_maemo',
       'XB_Maemo_Icon_26':'',
+      'changelog':'* Fix build dir, and so will not inflate tar.gz anymore',
       'copyright':'gpl'}}
       
       )

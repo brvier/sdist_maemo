@@ -13,9 +13,10 @@
 '''Generate the changelog content'''
 
 class Changelog:
-    def __init__(self,name,version,buildversion,changelog,author,email,buildDate):       
+    def __init__(self,name,version,buildversion,changelog,author,email,buildDate):
+        print [s for s in changelog.replace('\n','*').split('*') if s]
+        changelog = '\n  *'+'\n  *'.join([s for s in changelog.replace('\n','*').split('*') if ((s!='*') and (s!=''))])
         self.clog="""%(name)s (%(version)s-%(buildversion)s) stable; urgency=low
-
 %(changelog)s
 
  -- %(author)s <%(email)s>  %(buildDate)s
