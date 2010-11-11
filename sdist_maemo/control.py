@@ -42,7 +42,7 @@ Replaces: %(replaces)s
 Description: %(long_description)s
 XB-Maemo-Upgrade-Description: %(upgrade_description)s
 XSBC-Bugtracker: %(bugtracker)s
-XB-Maemo-Icon26:%(iconb64)s""" % {'name':name,
+XB-Maemo-Icon-26:%(iconb64)s""" % {'name':name,
                     'section':section,
                     'maintainer':maintainer,
                     'email':email,
