@@ -254,7 +254,7 @@ class sdist_maemo(Command):
         #Create the debian rules
         rules = Rules(self.name,DATA_DIR)
         dirs = rules.dirs
-        open(os.path.join(DEBIAN_DIR,"rules"),"w").write(rules.getContent())
+        open(os.path.join(DEBIAN_DIR,"rules"),"w").write(unicode(rules.getContent()).encode('utf-8'))
         os.chmod(os.path.join(DEBIAN_DIR,"rules"),0755)
 
         #Create the debian compat
@@ -267,7 +267,7 @@ class sdist_maemo(Command):
         d=datetime.now()
         self.buildDate=d.strftime("%a, %d %b %Y %H:%M:%S +0000")
         clog = Changelog(self.name,self.version,self.buildversion,self.changelog,self.distribution.get_maintainer(),self.distribution.get_maintainer_email(),self.buildDate)
-        open(os.path.join(DEBIAN_DIR,"changelog"),"w").write(clog.getContent())
+        open(os.path.join(DEBIAN_DIR,"changelog"),"w").write(unicode(clog.getContent()).encode('utf-8'))
           
         #Create the pre/post inst/rm Script
         if self.preinst is not None:
@@ -296,7 +296,7 @@ class sdist_maemo(Command):
                     self.conflicts,
                     self.replaces,
                     )
-        open(os.path.join(DEBIAN_DIR,"control"),"w").write(control.getContent())
+        open(os.path.join(DEBIAN_DIR,"control"),"w").write(unicode(control.getContent()).encode('utf-8'))
 
         #Create the debian licence file
         licence = Licence(self.copyright,
@@ -304,7 +304,7 @@ class sdist_maemo(Command):
                           self.distribution.get_maintainer_email(),
                           self.buildDate,
                           str(datetime.now().year))
-        open(os.path.join(DEBIAN_DIR,"copyright"),"w").write(licence.getContent())
+        open(os.path.join(DEBIAN_DIR,"copyright"),"w").write(unicode(licence.getContent()).encode('utf-8'))
 
         #Delete tar if already exist as it will made add to the same tar
         tarpath = os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.tar.gz')
@@ -344,7 +344,7 @@ class sdist_maemo(Command):
                      Architecture="%s"%self.architecture,
                     )
         f = open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.dsc'),"wb")
-        f.write(dsccontent._getContent())
+        f.write(unicode(dsccontent._getContent()).encode('utf-8'))
         f.close()
 
         #Changes file
@@ -369,7 +369,7 @@ class sdist_maemo(Command):
                           )
 
         f = open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.changes'),"wb")
-        f.write(changescontent.getContent())
+        f.write(unicode(changescontent.getContent()).encode('utf-8'))
         f.close()
         try:
             locale.setlocale(locale.LC_TIME,old_locale)
