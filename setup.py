@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import imp
+import sys
+reload(sys).setdefaultencoding("UTF-8")
 
 #Remove pyc and pyo file
 import glob,os
@@ -40,6 +42,5 @@ setup(name='python-sdist-maemo',
         "Programming Language :: Python",
         "Operating System :: POSIX :: Linux",
         "Intended Audience :: Developers",]
-      
       )
 
