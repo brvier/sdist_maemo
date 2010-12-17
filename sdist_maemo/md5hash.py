@@ -12,7 +12,7 @@
 ##
 ## Use '-' as filename to sum standard input.
 
-import md5
+import hashlib
 import sys
 
 def sumfile(fobj):
@@ -28,16 +28,11 @@ def sumfile(fobj):
 
 def md5sum(fname):
     '''Returns an md5 hash for file fname, or stdin if fname is "-".'''
-    if fname == '-':
-        ret = sumfile(sys.stdin)
-    else:
-        try:
-            f = file(fname, 'rb')
-        except:
-            return 'Failed to open file'
-        ret = sumfile(f)
+    f = open(fname, "r")
+    try:
+        return hashlib.md5(f.read()).hexdigest()
+    finally:
         f.close()
-    return ret
 
 
 # if invoked on command line, print md5 hashes of specified files.
