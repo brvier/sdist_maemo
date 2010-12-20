@@ -249,7 +249,9 @@ class sdist_maemo(Command):
                     os.makedirs(fulldirpath)
                 except: # TODO: Check exception is exists
                     pass    
-                copy_tree(package, fulldirpath)                
+                if "." not in package:
+                    #Only worry about top level packages
+                    copy_tree(package, fulldirpath)                
 
         #Create the debian rules
         rules = Rules(self.name,DATA_DIR)
