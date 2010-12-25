@@ -17,7 +17,7 @@ Implements the Distutils 'sdist_maemo' command.
 
 from distutils.core import Command
 from distutils.file_util import copy_file
-from distutils.dir_util import copy_tree, remove_tree
+from distutils.dir_util import copy_tree, remove_tree, mkpath
 from rules import Rules
 from changelog import Changelog
 from control import Control
@@ -215,19 +215,9 @@ class sdist_maemo(Command):
         DEBIAN_DIR = os.path.join(self.build_dir,'debian')
         DATA_DIR = os.path.join(self.build_dir,self.name)
 
-        try:
-            os.makedirs(DEBIAN_DIR)
-        except: # TODO: Check exception is exists
-            pass
-        try:
-            os.makedirs(self.dist_dir)
-        except: # TODO: Check exception is exists
-            pass
-
-        try:
-            os.makedirs(os.path.join(DATA_DIR,'usr','bin'))
-        except StandardError,e: # TODO: Check exception is exists
-            print e
+        mkpath(DEBIAN_DIR)
+        mkpath(self.dist_dir)
+        mkpath(os.path.join(DATA_DIR,'usr','bin'))
 
         if self.distribution.scripts is not None:
             for script in self.distribution.scripts:
@@ -238,10 +228,7 @@ class sdist_maemo(Command):
                 if theDir.startswith('/'):
                     theDir = theDir[1:]
                 fulldirpath = os.path.join(DATA_DIR, theDir)
-                try:
-                    os.makedirs(fulldirpath)
-                except: # TODO: Check exception is exists
-                    pass
+                mkpath(fulldirpath)
 
                 for currFile in theFiles:
                     copy_file(currFile, fulldirpath)
@@ -249,10 +236,7 @@ class sdist_maemo(Command):
         if self.distribution.packages is not None:
             for package in self.distribution.packages:
                 fulldirpath = os.path.join(DATA_DIR,'usr','lib','python2.5','site-packages',self.name.replace('-','_'))
-                try:
-                    os.makedirs(fulldirpath)
-                except: # TODO: Check exception is exists
-                    pass
+                mkpath(fulldirpath)
                 if "." not in package:
                     #Only worry about top level packages
                     copy_tree(package, fulldirpath)
