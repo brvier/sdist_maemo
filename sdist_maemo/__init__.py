@@ -28,6 +28,7 @@ from dsc import Dsc
 import time
 import os
 
+
 class sdist_maemo(Command):
 
     SECTIONS="user/desktop, user/development, user/education, user/games, user/graphics, user/multimedia, user/navigation, user/network, user/office, user/science, user/system, user/utilities, accessories, communication, games, multimedia, office, other, programming, support, themes, tools".split(", ")
@@ -35,7 +36,7 @@ class sdist_maemo(Command):
     LICENSES=["gpl","lgpl","bsd","artistic","shareware"]
 
     __version__ = '0.0.12'
-    
+
     # Brief (40-50 characters) description of the command
     description = "Maemo source package"
 
@@ -54,7 +55,7 @@ class sdist_maemo(Command):
                     ('depends=', None,
                      "Other Debian package dependencies (comma separated)"),
                     ('changelog=', None,
-                     "ChangeLog"), 
+                     "ChangeLog"),
                     ('XSBC-Bugtracker=', None,
                      "URI of the bug tracker"),
                     ('XB-Maemo-Display-Name=', None,
@@ -84,8 +85,6 @@ class sdist_maemo(Command):
                    ]
 
     def initialize_options (self):
-    
-        
         self.dist_dir = None
         self.build_dir = None
         self.section = None
@@ -108,13 +107,13 @@ class sdist_maemo(Command):
         self.urgency = None
         self.conflicts = None
         self.replaces = None
-        
+
     def finalize_options (self):
         self.set_undefined_options('sdist', ('dist_dir', 'dist_dir'))
 
         if self.build_dir is None:
             self.build_dir = "build"
-            
+
         if self.section is None:
             self.section = "user/other"
 
@@ -143,7 +142,7 @@ class sdist_maemo(Command):
 
         if self.suggests is None:
             self.suggests = ''
-            
+
         if self.conflicts is None:
             self.conflicts = ''
 
@@ -159,7 +158,7 @@ class sdist_maemo(Command):
         #clean changelog (add 2 spaces before each next lines)
         self.changelog=self.changelog.replace("\r","").strip()
         self.changelog = "\n  ".join(self.changelog.split("\n"))
-            
+
         self.name = self.distribution.get_name()
         self.description = self.distribution.get_description()
         self.long_description = self.distribution.get_long_description()
@@ -179,35 +178,35 @@ class sdist_maemo(Command):
 
         if self.urgency is None:
             self.urgency = 'low'
-            
+
         if self.buildversion is None:
             self.buildversion = "1"
-            
+
         if self.XB_Maemo_Icon_26 is None:
             self.XB_Maemo_Icon_26 = ''
-            
+
         if self.XB_Maemo_Display_Name is None:
             self.XB_Maemo_Display_Name = self.distribution.get_name()
-            
+
         if self.XSBC_Bugtracker is None:
             self.XSBC_Bugtracker = ''
-        
+
         if self.XB_Maemo_Upgrade_Description is None:
             self.XB_Maemo_Upgrade_Description = ''
 
         #clean long_description (add a space before each next lines)
         self.XB_Maemo_Upgrade_Description=self.XB_Maemo_Upgrade_Description.replace("\r","").strip()
         self.XB_Maemo_Upgrade_Description = "\n ".join(self.XB_Maemo_Upgrade_Description.split("\n"))
-           
-    def mkscript(self, name , dest ):
-        if name and name.strip()!="":
-            if (os.path.isfile(name)):# or (os.path.isfile(os.path.join(CURRENT,name))):    # it's a file
+
+    def mkscript(self, name , dest):
+        if name and name.strip() != "":
+            if os.path.isfile(name):# or (os.path.isfile(os.path.join(CURRENT,name))):    # it's a file
                 content = file(name).read()
             else:   # it's a script
                 content = name
             print dest
             open(dest,"w").write(content)
-              
+
     def run (self):
         """
         """
@@ -215,7 +214,7 @@ class sdist_maemo(Command):
         #Create folders and copy sources files
         DEBIAN_DIR = os.path.join(self.build_dir,'debian')
         DATA_DIR = os.path.join(self.build_dir,self.name)
-        
+
         try:
             os.makedirs(DEBIAN_DIR)
         except: # TODO: Check exception is exists
@@ -224,7 +223,7 @@ class sdist_maemo(Command):
             os.makedirs(self.dist_dir)
         except: # TODO: Check exception is exists
             pass
-            
+
         try:
             os.makedirs(os.path.join(DATA_DIR,'usr','bin'))
         except StandardError,e: # TODO: Check exception is exists
@@ -243,7 +242,7 @@ class sdist_maemo(Command):
                     os.makedirs(fulldirpath)
                 except: # TODO: Check exception is exists
                     pass
-    
+
                 for currFile in theFiles:
                     copy_file(currFile, fulldirpath)
 
@@ -253,10 +252,10 @@ class sdist_maemo(Command):
                 try:
                     os.makedirs(fulldirpath)
                 except: # TODO: Check exception is exists
-                    pass    
+                    pass
                 if "." not in package:
                     #Only worry about top level packages
-                    copy_tree(package, fulldirpath)                
+                    copy_tree(package, fulldirpath)
 
         #Create the debian rules
         rules = Rules(self.name,DATA_DIR)
@@ -266,16 +265,16 @@ class sdist_maemo(Command):
 
         #Create the debian compat
         open(os.path.join(DEBIAN_DIR,"compat"),"w").write("5\n")
-          
+
         #Create the debian dirs
         open(os.path.join(DEBIAN_DIR,"dirs"),"w").write("\n".join(dirs))
-                 
+
         #Create the debian changelog
         d=datetime.now()
         self.buildDate=d.strftime("%a, %d %b %Y %H:%M:%S +0000")
         clog = Changelog(self.name,self.version,self.buildversion,self.changelog,self.distribution.get_maintainer(),self.distribution.get_maintainer_email(),self.buildDate)
         open(os.path.join(DEBIAN_DIR,"changelog"),"w").write(unicode(clog.getContent()).encode('utf-8'))
-          
+
         #Create the pre/post inst/rm Script
         if self.preinst is not None:
             self.mkscript(self.preinst ,os.path.join(DEBIAN_DIR,"preinst"))
@@ -317,7 +316,7 @@ class sdist_maemo(Command):
         tarpath = os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.tar.gz')
         if os.path.exists(tarpath):
             os.remove(tarpath)
-            
+
         #Now create the tar.gz
         import tarfile
         def reset(tarinfo):
@@ -332,10 +331,9 @@ class sdist_maemo(Command):
         #Clean the build dir
         remove_tree(DEBIAN_DIR)
         remove_tree(DATA_DIR)
-        
+
         #Create the Dsc file
         import locale
-        import commands
         try:
             old_locale,iso=locale.getlocale(locale.LC_TIME)
             locale.setlocale(locale.LC_TIME,'en_US')
@@ -347,7 +345,7 @@ class sdist_maemo(Command):
                      Format='1.0',
                      Source=self.name,
                      Version="%s-%s"%(self.version,self.buildversion),
-                     Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email()),                             
+                     Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email()),
                      Architecture="%s"%self.architecture,
                     )
         f = open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.dsc'),"wb")
@@ -372,7 +370,7 @@ class sdist_maemo(Command):
                           Version="%s-%s"%(self.version,self.buildversion),
                           Distribution="%s"%self.repository,
                           Urgency="%s"%self.urgency,
-                          Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email())                           
+                          Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email())
                           )
 
         f = open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.changes'),"wb")
