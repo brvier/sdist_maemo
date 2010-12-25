@@ -79,6 +79,8 @@ class sdist_maemo(Command):
                      "Conflicts package"),
                     ('copyright=', None,
                      "Licence copyright"),
+                    ('dist-dir=', 'd',
+                     "directory to put the source distribution archive(s) in [default: dist]"),
                    ]
 
     def initialize_options (self):
@@ -108,8 +110,7 @@ class sdist_maemo(Command):
         self.replaces = None
         
     def finalize_options (self):
-        if self.dist_dir is None:
-            self.dist_dir = "dist"
+        self.set_undefined_options('sdist', ('dist_dir', 'dist_dir'))
 
         if self.build_dir is None:
             self.build_dir = "build"
@@ -217,6 +218,10 @@ class sdist_maemo(Command):
         
         try:
             os.makedirs(DEBIAN_DIR)
+        except: # TODO: Check exception is exists
+            pass
+        try:
+            os.makedirs(self.dist_dir)
         except: # TODO: Check exception is exists
             pass
             
