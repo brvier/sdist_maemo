@@ -33,7 +33,7 @@ setup(name='python-sdist-maemo',
       'XSBC_Bugtracker':'http://khertan.net/sdict_maemo:bugs',
       'XB_Maemo_Display_Name':'Python sdist_maemo',
       'XB_Maemo_Icon_26':'',
-      'changelog':'* Removing use of deprecated module md5 * Distutils requires sub-packages to be specified, so ignoring them here',
+      'changelog':'* Do not provide optionnals informations in control if they are not specified',
       'copyright':'gpl'},},
       classifiers=[
         "Development Status :: 4 - Beta",

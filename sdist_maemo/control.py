@@ -24,7 +24,6 @@ class Control:
                     conflicts,
                     replaces):       
 
-        self.getIconContent(icon)
         self.control="""Source: %(name)s
 Section: %(section)s
 Priority: extra
@@ -34,29 +33,30 @@ Standards-Version: 3.7.2
 
 Package: %(name)s
 XB-Maemo-Display-Name: %(display_name)s
-Architecture: %(arch)s
-Depends: %(depends)s
-Suggests: %(suggests)s
-Conflicts: %(conflicts)s
-Replaces: %(replaces)s
-Description: %(long_description)s
-XB-Maemo-Upgrade-Description: %(upgrade_description)s
-XSBC-Bugtracker: %(bugtracker)s
-XB-Maemo-Icon-26:%(iconb64)s""" % {'name':name,
+Architecture: %(arch)s""" % {'name':name,
                     'section':section,
                     'maintainer':maintainer,
                     'email':email,
                     'display_name':display_name,
-                    'arch':arch,
-                    'depends':depends,
-                    'suggests':suggests,
-                    'description':description,
-                    'long_description':long_description,
-                    'upgrade_description':upgrade_description,
-                    'bugtracker':bugtracker,
-                    'conflicts':conflicts,
-                    'replaces':replaces,
-                    'iconb64':self.iconb64}
+                    'arch':arch,}
+
+        if depends:
+            self.control = self.control + '\nDepends: %s' % depends
+        if suggests:
+            self.control = self.control + '\nSuggests: %s' % suggests
+        if conflicts:
+            self.control = self.control + '\nConflicts: %s' % conflicts
+        if replaces:
+            self.control = self.control + '\nReplaces: %s' % replaces
+        if description:
+            self.control = self.control + '\nDescription: %s' % description
+        if upgrade_description:
+            self.control = self.control + '\nXB-Maemo-Upgrade-Description: %s' % upgrade_description
+        if bugtracker:
+            self.control = self.control + '\nXSBC-Bugtracker: %s' % bugtracker
+        iconb64 = self.getIconContent(icon)
+        if iconb64:
+            self.control = self.control + '\nXB-Maemo-Icon-26: %s' % iconb64
 
     def getContent(self):
         print self.control
@@ -66,7 +66,7 @@ XB-Maemo-Icon-26:%(iconb64)s""" % {'name':name,
         try:
           import base64
           iconb64 = "\n ".join(base64.encodestring(open(icon).read()).split("\n")[0:-1])
-          self.iconb64 = "\n %s" % ( iconb64 )
+          return "\n %s" % ( iconb64 )
         except:
-          self.iconb64 = ''            
+          return ''            
     
