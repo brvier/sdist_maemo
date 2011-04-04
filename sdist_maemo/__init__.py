@@ -35,7 +35,7 @@ class sdist_maemo(Command):
     ARCHS="all any armel i386 ia64 alpha amd64 armeb arm hppa m32r m68k mips mipsel powerpc ppc64 s390 s390x sh3 sh3eb sh4 sh4eb sparc darwin-i386 darwin-ia64 darwin-alpha darwin-amd64 darwin-armeb darwin-arm darwin-hppa darwin-m32r darwin-m68k darwin-mips darwin-mipsel darwin-powerpc darwin-ppc64 darwin-s390 darwin-s390x darwin-sh3 darwin-sh3eb darwin-sh4 darwin-sh4eb darwin-sparc freebsd-i386 freebsd-ia64 freebsd-alpha freebsd-amd64 freebsd-armeb freebsd-arm freebsd-hppa freebsd-m32r freebsd-m68k freebsd-mips freebsd-mipsel freebsd-powerpc freebsd-ppc64 freebsd-s390 freebsd-s390x freebsd-sh3 freebsd-sh3eb freebsd-sh4 freebsd-sh4eb freebsd-sparc kfreebsd-i386 kfreebsd-ia64 kfreebsd-alpha kfreebsd-amd64 kfreebsd-armeb kfreebsd-arm kfreebsd-hppa kfreebsd-m32r kfreebsd-m68k kfreebsd-mips kfreebsd-mipsel kfreebsd-powerpc kfreebsd-ppc64 kfreebsd-s390 kfreebsd-s390x kfreebsd-sh3 kfreebsd-sh3eb kfreebsd-sh4 kfreebsd-sh4eb kfreebsd-sparc knetbsd-i386 knetbsd-ia64 knetbsd-alpha knetbsd-amd64 knetbsd-armeb knetbsd-arm knetbsd-hppa knetbsd-m32r knetbsd-m68k knetbsd-mips knetbsd-mipsel knetbsd-powerpc knetbsd-ppc64 knetbsd-s390 knetbsd-s390x knetbsd-sh3 knetbsd-sh3eb knetbsd-sh4 knetbsd-sh4eb knetbsd-sparc netbsd-i386 netbsd-ia64 netbsd-alpha netbsd-amd64 netbsd-armeb netbsd-arm netbsd-hppa netbsd-m32r netbsd-m68k netbsd-mips netbsd-mipsel netbsd-powerpc netbsd-ppc64 netbsd-s390 netbsd-s390x netbsd-sh3 netbsd-sh3eb netbsd-sh4 netbsd-sh4eb netbsd-sparc openbsd-i386 openbsd-ia64 openbsd-alpha openbsd-amd64 openbsd-armeb openbsd-arm openbsd-hppa openbsd-m32r openbsd-m68k openbsd-mips openbsd-mipsel openbsd-powerpc openbsd-ppc64 openbsd-s390 openbsd-s390x openbsd-sh3 openbsd-sh3eb openbsd-sh4 openbsd-sh4eb openbsd-sparc hurd-i386 hurd-ia64 hurd-alpha hurd-amd64 hurd-armeb hurd-arm hurd-hppa hurd-m32r hurd-m68k hurd-mips hurd-mipsel hurd-powerpc hurd-ppc64 hurd-s390 hurd-s390x hurd-sh3 hurd-sh3eb hurd-sh4 hurd-sh4eb hurd-sparc".split(" ")
     LICENSES=["gpl","lgpl","bsd","artistic","shareware"]
 
-    __version__ = '0.0.13'
+    __version__ = '0.0.14'
 
     # Brief (40-50 characters) description of the command
     description = "Maemo source package"
@@ -43,7 +43,9 @@ class sdist_maemo(Command):
     # List of option tuples: long name, short name (None if no short
     # name), and help string.
     user_options = [('name=', None,
-                     "Package name"),
+                     "Python Package name"),
+                     ('debian-package=', None,
+                     "Debian Package name"),
                     ('buildversion=', None,
                      "Package buildversion"),
                     ('section=', None,
@@ -86,6 +88,7 @@ class sdist_maemo(Command):
 
     def initialize_options (self):
         self.dist_dir = None
+        self.debian_package = None
         self.build_dir = None
         self.section = None
         self.priority = None
@@ -154,12 +157,16 @@ class sdist_maemo(Command):
 
         if self.changelog is None:
             self.changelog = ""
-
+            
         #clean changelog (add 2 spaces before each next lines)
         self.changelog=self.changelog.replace("\r","").strip()
         self.changelog = "\n  ".join(self.changelog.split("\n"))
 
         self.name = self.distribution.get_name()
+
+        if self.debian_package is None:
+            self.debian_package = name
+
         self.description = self.distribution.get_description()
         self.long_description = self.distribution.get_long_description()
 
@@ -213,7 +220,7 @@ class sdist_maemo(Command):
 
         #Create folders and copy sources files
         DEBIAN_DIR = os.path.join(self.build_dir,'debian')
-        DATA_DIR = os.path.join(self.build_dir,self.name)
+        DATA_DIR = os.path.join(self.build_dir,self.debian_package)
 
         mkpath(DEBIAN_DIR)
         mkpath(self.dist_dir)
@@ -256,7 +263,7 @@ class sdist_maemo(Command):
         #Create the debian changelog
         d=datetime.now()
         self.buildDate=d.strftime("%a, %d %b %Y %H:%M:%S +0000")
-        clog = Changelog(self.name,self.version,self.buildversion,self.changelog,self.distribution.get_maintainer(),self.distribution.get_maintainer_email(),self.buildDate)
+        clog = Changelog(self.debian_package,self.version,self.buildversion,self.changelog,self.distribution.get_maintainer(),self.distribution.get_maintainer_email(),self.buildDate)
         open(os.path.join(DEBIAN_DIR,"changelog"),"w").write(unicode(clog.getContent()).encode('utf-8'))
 
         #Create the pre/post inst/rm Script
@@ -270,7 +277,7 @@ class sdist_maemo(Command):
             self.mkscript(self.postre ,os.path.join(DEBIAN_DIR,"postrm"))
 
         #Create the control file
-        control = Control(self.name,
+        control = Control(self.debian_package,
                     self.section,
                     self.distribution.get_maintainer(),
                     self.distribution.get_maintainer_email(),
@@ -297,7 +304,7 @@ class sdist_maemo(Command):
         open(os.path.join(DEBIAN_DIR,"copyright"),"w").write(unicode(licence.getContent()).encode('utf-8'))
 
         #Delete tar if already exist as it will made add to the same tar
-        tarpath = os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.tar.gz')
+        tarpath = os.path.join(self.dist_dir,self.debian_package+'_'+self.version+'-'+self.buildversion+'.tar.gz')
         if os.path.exists(tarpath):
             os.remove(tarpath)
 
@@ -325,14 +332,14 @@ class sdist_maemo(Command):
             pass
         dsccontent = Dsc("%s-%s"%(self.version,self.buildversion),
                      self.depends,
-                     (os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.tar.gz'),),
+                     (os.path.join(self.dist_dir,self.debian_package+'_'+self.version+'-'+self.buildversion+'.tar.gz'),),
                      Format='1.0',
-                     Source=self.name,
+                     Source=self.debian_package,
                      Version="%s-%s"%(self.version,self.buildversion),
                      Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email()),
                      Architecture="%s"%self.architecture,
                     )
-        f = open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.dsc'),"wb")
+        f = open(os.path.join(self.dist_dir,self.debian_package+'_'+self.version+'-'+self.buildversion+'.dsc'),"wb")
         f.write(unicode(dsccontent._getContent()).encode('utf-8'))
         f.close()
 
@@ -342,14 +349,14 @@ class sdist_maemo(Command):
                         "%s"%self.description,
                         "%s"%self.changelog,
                         (
-                                 "%s.tar.gz"%os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion),
-                                 "%s.dsc"%os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion),
+                                 "%s.tar.gz"%os.path.join(self.dist_dir,self.debian_package+'_'+self.version+'-'+self.buildversion),
+                                 "%s.dsc"%os.path.join(self.dist_dir,self.debian_package+'_'+self.version+'-'+self.buildversion),
                           ),
                           "%s"%self.section,
                           "%s"%self.repository,
                           Format='1.7',
                           Date=time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()),
-                          Source="%s"%self.name,
+                          Source="%s"%self.debian_package,
                           Architecture="%s"%self.architecture,
                           Version="%s-%s"%(self.version,self.buildversion),
                           Distribution="%s"%self.repository,
@@ -357,7 +364,7 @@ class sdist_maemo(Command):
                           Maintainer="%s <%s>"%(self.distribution.get_maintainer(),self.distribution.get_maintainer_email())
                           )
 
-        f = open(os.path.join(self.dist_dir,self.name+'_'+self.version+'-'+self.buildversion+'.changes'),"wb")
+        f = open(os.path.join(self.dist_dir,self.debian_package+'_'+self.version+'-'+self.buildversion+'.changes'),"wb")
         f.write(unicode(changescontent.getContent()).encode('utf-8'))
         f.close()
         try:
