@@ -165,7 +165,7 @@ class sdist_maemo(Command):
         self.name = self.distribution.get_name()
 
         if self.debian_package is None:
-            self.debian_package = name
+            self.debian_package = self.name
 
         self.description = self.distribution.get_description()
         self.long_description = self.distribution.get_long_description()
