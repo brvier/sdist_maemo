@@ -33,7 +33,7 @@ setup(name='python-sdist-maemo',
       'XSBC_Bugtracker':'http://khertan.net/sdict_maemo:bugs',
       'XB_Maemo_Display_Name':'Python sdist_maemo',
       'XB_Maemo_Icon_26':'',
-      'changelog':'* Add option to specify a different debian package name than the python one',
+      'changelog':'* Generate only package and no more subpackage not specied, like standard distutils install command',
       'copyright':'gpl'},},
       classifiers=[
         "Development Status :: 4 - Beta",
