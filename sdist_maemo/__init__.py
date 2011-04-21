@@ -44,7 +44,7 @@ class sdist_maemo(Command):
     ARCHS="all any armel i386 ia64 alpha amd64 armeb arm hppa m32r m68k mips mipsel powerpc ppc64 s390 s390x sh3 sh3eb sh4 sh4eb sparc darwin-i386 darwin-ia64 darwin-alpha darwin-amd64 darwin-armeb darwin-arm darwin-hppa darwin-m32r darwin-m68k darwin-mips darwin-mipsel darwin-powerpc darwin-ppc64 darwin-s390 darwin-s390x darwin-sh3 darwin-sh3eb darwin-sh4 darwin-sh4eb darwin-sparc freebsd-i386 freebsd-ia64 freebsd-alpha freebsd-amd64 freebsd-armeb freebsd-arm freebsd-hppa freebsd-m32r freebsd-m68k freebsd-mips freebsd-mipsel freebsd-powerpc freebsd-ppc64 freebsd-s390 freebsd-s390x freebsd-sh3 freebsd-sh3eb freebsd-sh4 freebsd-sh4eb freebsd-sparc kfreebsd-i386 kfreebsd-ia64 kfreebsd-alpha kfreebsd-amd64 kfreebsd-armeb kfreebsd-arm kfreebsd-hppa kfreebsd-m32r kfreebsd-m68k kfreebsd-mips kfreebsd-mipsel kfreebsd-powerpc kfreebsd-ppc64 kfreebsd-s390 kfreebsd-s390x kfreebsd-sh3 kfreebsd-sh3eb kfreebsd-sh4 kfreebsd-sh4eb kfreebsd-sparc knetbsd-i386 knetbsd-ia64 knetbsd-alpha knetbsd-amd64 knetbsd-armeb knetbsd-arm knetbsd-hppa knetbsd-m32r knetbsd-m68k knetbsd-mips knetbsd-mipsel knetbsd-powerpc knetbsd-ppc64 knetbsd-s390 knetbsd-s390x knetbsd-sh3 knetbsd-sh3eb knetbsd-sh4 knetbsd-sh4eb knetbsd-sparc netbsd-i386 netbsd-ia64 netbsd-alpha netbsd-amd64 netbsd-armeb netbsd-arm netbsd-hppa netbsd-m32r netbsd-m68k netbsd-mips netbsd-mipsel netbsd-powerpc netbsd-ppc64 netbsd-s390 netbsd-s390x netbsd-sh3 netbsd-sh3eb netbsd-sh4 netbsd-sh4eb netbsd-sparc openbsd-i386 openbsd-ia64 openbsd-alpha openbsd-amd64 openbsd-armeb openbsd-arm openbsd-hppa openbsd-m32r openbsd-m68k openbsd-mips openbsd-mipsel openbsd-powerpc openbsd-ppc64 openbsd-s390 openbsd-s390x openbsd-sh3 openbsd-sh3eb openbsd-sh4 openbsd-sh4eb openbsd-sparc hurd-i386 hurd-ia64 hurd-alpha hurd-amd64 hurd-armeb hurd-arm hurd-hppa hurd-m32r hurd-m68k hurd-mips hurd-mipsel hurd-powerpc hurd-ppc64 hurd-s390 hurd-s390x hurd-sh3 hurd-sh3eb hurd-sh4 hurd-sh4eb hurd-sparc".split(" ")
     LICENSES=["gpl","lgpl","bsd","artistic","shareware"]
 
-    __version__ = '0.0.16'
+    __version__ = '0.0.17'
 
     # Brief (40-50 characters) description of the command
     description = "Maemo source package"
@@ -233,27 +233,42 @@ class sdist_maemo(Command):
 
         mkpath(DEBIAN_DIR)
         mkpath(self.dist_dir)
-        mkpath(os.path.join(DATA_DIR,'usr','bin'))
+        #mkpath(os.path.join(DATA_DIR,'usr','bin'))
 
-        if self.distribution.scripts is not None:
-            for script in self.distribution.scripts:
-                copy_file(script, os.path.join(DATA_DIR,'usr','bin'))
+        self.bdist_dir = DATA_DIR
+        install = self.reinitialize_command('install', reinit_subcommands=1)
+        install.root = self.bdist_dir
+        install.skip_build = 0
+        install.warn_dir = 1
 
-        if self.distribution.data_files is not None:
-            for theDir, theFiles in self.distribution.data_files:
-                if theDir.startswith('/'):
-                    theDir = theDir[1:]
-                fulldirpath = os.path.join(DATA_DIR, theDir)
-                mkpath(fulldirpath)
+        self.run_command('install')
 
-                for currFile in theFiles:
-                    copy_file(currFile, fulldirpath)
+        # if self.distribution.scripts is not None:
+            # for script in self.distribution.scripts:
+                # copy_file(script, os.path.join(DATA_DIR,'usr','bin'))
 
-        if self.distribution.packages is not None:
-            for package in self.distribution.packages:
-                fulldirpath = os.path.join(DATA_DIR,'usr','lib','python2.5','site-packages',package.replace('-','_').replace('.',os.sep))
-                mkpath(fulldirpath)
-                copy_directory(package.replace('.',os.sep), fulldirpath)
+        # if self.distribution.data_files is not None:
+            # for theDir, theFiles in self.distribution.data_files:
+                # if theDir.startswith('/'):
+                    # theDir = theDir[1:]
+                # fulldirpath = os.path.join(DATA_DIR, theDir)
+                # mkpath(fulldirpath)
+
+                # for currFile in theFiles:
+                    # copy_file(currFile, fulldirpath)
+
+        # if self.distribution.packages is not None:
+            # for package in self.distribution.packages:
+                # fulldirpath = os.path.join(DATA_DIR,'usr','lib','python2.5','site-packages',package.replace('-','_').replace('.',os.sep))
+                # mkpath(fulldirpath)
+                # copy_directory(package.replace('.',os.sep), fulldirpath)
+
+        # if self.distribution.package_data is not None:
+            # for package in self.distribution.package_data.keys():
+                # for currFile in self.distribution.package_data[package]:
+                    # fulldirpath = os.path.join(DATA_DIR,'usr','lib','python2.5','site-packages',package.replace('-','_').replace('.',os.sep), os.path.dirname(currFile.replace('-','_').replace('.',os.sep)))
+                    # mkpath(fulldirpath)
+                    # copy_file(os.path.join(package.replace('-','_').replace('.',os.sep), currFile.replace('-','_').replace('.',os.sep)), fulldirpath)
 
         #Create the debian rules
         rules = Rules(self.debian_package,DATA_DIR)
