@@ -1,4 +1,4 @@
-#
+# -*- coding: utf-8 -*-
 # sdist_maemo
 #
 # Script to add 'sdist_maemo' source package distribution command to
@@ -253,7 +253,7 @@ class sdist_maemo(Command):
             for package in self.distribution.packages:
                 fulldirpath = os.path.join(DATA_DIR,'usr','lib','python2.5','site-packages',package.replace('-','_').replace('.',os.sep))
                 mkpath(fulldirpath)
-                copy_directory(package, fulldirpath)
+                copy_directory(package.replace('.',os.sep), fulldirpath)
 
         #Create the debian rules
         rules = Rules(self.debian_package,DATA_DIR)
