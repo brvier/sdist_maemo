@@ -7,10 +7,10 @@
 #
 # Author: khertan@khertan.net
 # License: GPL 3.0
-# 
+#
 # (Based on standard Python-supplied 'command_template' file.)
 
-import os 
+import os
 import md5hash
 
 class Changes(object):
@@ -35,7 +35,7 @@ class Changes(object):
         if self.description:
             description=self.description.replace("\n","\n ")
             content.append('Description: ')
-            content.append(' %s' % description)
+            content.append('\n  %s' % description)
 
         if self.changes:
             changes=self.changes.replace("\n","\n ")
@@ -54,3 +54,4 @@ class Changes(object):
             content.append(' ' + md5 + ' ' + size + ' ' + self.category +' '+self.repository+' '+os.path.basename(onefile))
 
         return "\n".join(content) + "\n\n"
+

@@ -44,7 +44,7 @@ Architecture: %(arch)s""" % {'name':name,
         if replaces:
             self.control = self.control + '\nReplaces: %s' % replaces
         if description:
-            self.control = self.control + '\nDescription: %s' % description
+            self.control = self.control + '\nDescription: \n %s ' % description
 
         for key in optionnal:
             if key and optionnal[key]:
