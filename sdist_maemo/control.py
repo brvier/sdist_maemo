@@ -7,7 +7,7 @@
 #
 # Author: khertan@khertan.net
 # License: GPL 3.0
-# 
+#
 # (Based on standard Python-supplied 'command_template' file.)
 
 '''Generate the control content'''
@@ -16,13 +16,10 @@ import os
 import sys
 
 class Control:
-    def __init__(self,name,section,maintainer,email,display_name,arch,
+    def __init__(self,name,section,maintainer,email,arch,
                     depends,suggests,description,long_description,
-                    upgrade_description,
-                    bugtracker,
-                    icon,
                     conflicts,
-                    replaces):       
+                    replaces, optionnal = {}):
 
         self.control="""Source: %(name)s
 Section: %(section)s
@@ -32,7 +29,6 @@ Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
 
 Package: %(name)s
-XB-Maemo-Display-Name: %(display_name)s
 Architecture: %(arch)s""" % {'name':name,
                     'section':section,
                     'maintainer':maintainer,
@@ -50,23 +46,12 @@ Architecture: %(arch)s""" % {'name':name,
             self.control = self.control + '\nReplaces: %s' % replaces
         if description:
             self.control = self.control + '\nDescription: %s' % description
-        if upgrade_description:
-            self.control = self.control + '\nXB-Maemo-Upgrade-Description: %s' % upgrade_description
-        if bugtracker:
-            self.control = self.control + '\nXSBC-Bugtracker: %s' % bugtracker
-        iconb64 = self.getIconContent(icon)
-        if iconb64:
-            self.control = self.control + '\nXB-Maemo-Icon-26: %s' % iconb64
+
+        for key, value in optionnal:
+            if key and value:
+                self.control = self.control + '\n%s: %s' % (key, value)
 
     def getContent(self):
         print self.control
         return self.control
 
-    def getIconContent(self,icon):
-        try:
-          import base64
-          iconb64 = "\n ".join(base64.encodestring(open(icon).read()).split("\n")[0:-1])
-          return "\n %s" % ( iconb64 )
-        except:
-          return ''            
-    

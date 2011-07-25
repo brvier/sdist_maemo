@@ -44,7 +44,7 @@ class sdist_maemo(Command):
     ARCHS="all any armel i386 ia64 alpha amd64 armeb arm hppa m32r m68k mips mipsel powerpc ppc64 s390 s390x sh3 sh3eb sh4 sh4eb sparc darwin-i386 darwin-ia64 darwin-alpha darwin-amd64 darwin-armeb darwin-arm darwin-hppa darwin-m32r darwin-m68k darwin-mips darwin-mipsel darwin-powerpc darwin-ppc64 darwin-s390 darwin-s390x darwin-sh3 darwin-sh3eb darwin-sh4 darwin-sh4eb darwin-sparc freebsd-i386 freebsd-ia64 freebsd-alpha freebsd-amd64 freebsd-armeb freebsd-arm freebsd-hppa freebsd-m32r freebsd-m68k freebsd-mips freebsd-mipsel freebsd-powerpc freebsd-ppc64 freebsd-s390 freebsd-s390x freebsd-sh3 freebsd-sh3eb freebsd-sh4 freebsd-sh4eb freebsd-sparc kfreebsd-i386 kfreebsd-ia64 kfreebsd-alpha kfreebsd-amd64 kfreebsd-armeb kfreebsd-arm kfreebsd-hppa kfreebsd-m32r kfreebsd-m68k kfreebsd-mips kfreebsd-mipsel kfreebsd-powerpc kfreebsd-ppc64 kfreebsd-s390 kfreebsd-s390x kfreebsd-sh3 kfreebsd-sh3eb kfreebsd-sh4 kfreebsd-sh4eb kfreebsd-sparc knetbsd-i386 knetbsd-ia64 knetbsd-alpha knetbsd-amd64 knetbsd-armeb knetbsd-arm knetbsd-hppa knetbsd-m32r knetbsd-m68k knetbsd-mips knetbsd-mipsel knetbsd-powerpc knetbsd-ppc64 knetbsd-s390 knetbsd-s390x knetbsd-sh3 knetbsd-sh3eb knetbsd-sh4 knetbsd-sh4eb knetbsd-sparc netbsd-i386 netbsd-ia64 netbsd-alpha netbsd-amd64 netbsd-armeb netbsd-arm netbsd-hppa netbsd-m32r netbsd-m68k netbsd-mips netbsd-mipsel netbsd-powerpc netbsd-ppc64 netbsd-s390 netbsd-s390x netbsd-sh3 netbsd-sh3eb netbsd-sh4 netbsd-sh4eb netbsd-sparc openbsd-i386 openbsd-ia64 openbsd-alpha openbsd-amd64 openbsd-armeb openbsd-arm openbsd-hppa openbsd-m32r openbsd-m68k openbsd-mips openbsd-mipsel openbsd-powerpc openbsd-ppc64 openbsd-s390 openbsd-s390x openbsd-sh3 openbsd-sh3eb openbsd-sh4 openbsd-sh4eb openbsd-sparc hurd-i386 hurd-ia64 hurd-alpha hurd-amd64 hurd-armeb hurd-arm hurd-hppa hurd-m32r hurd-m68k hurd-mips hurd-mipsel hurd-powerpc hurd-ppc64 hurd-s390 hurd-s390x hurd-sh3 hurd-sh3eb hurd-sh4 hurd-sh4eb hurd-sparc".split(" ")
     LICENSES=["gpl","lgpl","bsd","artistic","shareware"]
 
-    __version__ = '0.0.17'
+    __version__ = '0.1.0'
 
     # Brief (40-50 characters) description of the command
     description = "Maemo source package"
@@ -67,14 +67,18 @@ class sdist_maemo(Command):
                      "Other Debian package dependencies (comma separated)"),
                     ('changelog=', None,
                      "ChangeLog"),
-                    ('XSBC-Bugtracker=', None,
+                    ('Maemo-Bugtracker=', None,
                      "URI of the bug tracker"),
-                    ('XB-Maemo-Display-Name=', None,
+                    ('Maemo-Display-Name=', None,
                      "Display name"),
-                    ('XB-Maemo-Upgrade-Description=', None,
+                    ('Maemo-Upgrade-Description=', None,
                      "Upgrade description"),
-                    ('XB-Maemo-Icon-26=', None,
+                    ('Maemo-Icon-26=', None,
                      "Maemo package icon"),
+                    ('Maemo-Flags=', None,
+                     "Maemo specifics flags"),
+                    ('MeeGo-Desktop-Entry-Filename=', None,
+                     "MeeGo specifics entry filename or filepath"),
                     ('postinst=', None,
                      "Post install script"),
                     ('postre=', None,
@@ -107,10 +111,12 @@ class sdist_maemo(Command):
         self.suggests = None
         self.buildversion = None
         self.changelog = None
-        self.XB_Maemo_Icon_26 = None
-        self.XB_Maemo_Display_Name = None
-        self.XSBC_Bugtracker = None
-        self.XB_Maemo_Upgrade_Description = None
+        self.Maemo_Icon_26 = None
+        self.Maemo_Display_Name = None
+        self.Maemo_Bugtracker = None
+        self.Maemo_Upgrade_Description = None
+        self.Maemo_Flags = None
+        self.MeeGo_Desktop_Entry_Filename = None
         self.postinst = None
         self.preinst = None
         self.prere = None
@@ -198,21 +204,27 @@ class sdist_maemo(Command):
         if self.buildversion is None:
             self.buildversion = "1"
 
-        if self.XB_Maemo_Icon_26 is None:
-            self.XB_Maemo_Icon_26 = ''
+        if self.Maemo_Icon_26 is None:
+            self.Maemo_Icon_26 = ''
 
-        if self.XB_Maemo_Display_Name is None:
-            self.XB_Maemo_Display_Name = self.distribution.get_name()
+        if self.Maemo_Display_Name is None:
+            self.Maemo_Display_Name = self.distribution.get_name()
 
-        if self.XSBC_Bugtracker is None:
-            self.XSBC_Bugtracker = ''
+        if self.Maemo_Bugtracker is None:
+            self.Maemo_Bugtracker = ''
 
-        if self.XB_Maemo_Upgrade_Description is None:
-            self.XB_Maemo_Upgrade_Description = ''
+        if self.Maemo_Upgrade_Description is None:
+            self.Maemo_Upgrade_Description = ''
+
+        if self.MeeGo_Desktop_Entry_Filename is None:
+            self.Maemo_Upgrade_Description = ''
+
+        if self.Maemo_Flags is None:
+            self.Maemo_Flags = 'visible'
 
         #clean long_description (add a space before each next lines)
-        self.XB_Maemo_Upgrade_Description=self.XB_Maemo_Upgrade_Description.replace("\r","").strip()
-        self.XB_Maemo_Upgrade_Description = "\n ".join(self.XB_Maemo_Upgrade_Description.split("\n"))
+        self.Maemo_Upgrade_Description=self.Maemo_Upgrade_Description.replace("\r","").strip()
+        self.Maemo_Upgrade_Description = "\n ".join(self.Maemo_Upgrade_Description.split("\n"))
 
     def mkscript(self, name , dest):
         if name and name.strip() != "":
@@ -222,6 +234,14 @@ class sdist_maemo(Command):
                 content = name
             print dest
             open(dest,"w").write(content)
+
+    def getIconContent(self,icon):
+        try:
+          import base64
+          iconb64 = "\n ".join(base64.encodestring(open(icon).read()).split("\n")[0:-1])
+          return "\n %s" % ( iconb64 )
+        except:
+          return ''
 
     def run (self):
         """
@@ -242,33 +262,6 @@ class sdist_maemo(Command):
         install.warn_dir = 1
 
         self.run_command('install')
-
-        # if self.distribution.scripts is not None:
-            # for script in self.distribution.scripts:
-                # copy_file(script, os.path.join(DATA_DIR,'usr','bin'))
-
-        # if self.distribution.data_files is not None:
-            # for theDir, theFiles in self.distribution.data_files:
-                # if theDir.startswith('/'):
-                    # theDir = theDir[1:]
-                # fulldirpath = os.path.join(DATA_DIR, theDir)
-                # mkpath(fulldirpath)
-
-                # for currFile in theFiles:
-                    # copy_file(currFile, fulldirpath)
-
-        # if self.distribution.packages is not None:
-            # for package in self.distribution.packages:
-                # fulldirpath = os.path.join(DATA_DIR,'usr','lib','python2.5','site-packages',package.replace('-','_').replace('.',os.sep))
-                # mkpath(fulldirpath)
-                # copy_directory(package.replace('.',os.sep), fulldirpath)
-
-        # if self.distribution.package_data is not None:
-            # for package in self.distribution.package_data.keys():
-                # for currFile in self.distribution.package_data[package]:
-                    # fulldirpath = os.path.join(DATA_DIR,'usr','lib','python2.5','site-packages',package.replace('-','_').replace('.',os.sep), os.path.dirname(currFile.replace('-','_').replace('.',os.sep)))
-                    # mkpath(fulldirpath)
-                    # copy_file(os.path.join(package.replace('-','_').replace('.',os.sep), currFile.replace('-','_').replace('.',os.sep)), fulldirpath)
 
         #Create the debian rules
         rules = Rules(self.debian_package,DATA_DIR)
@@ -303,17 +296,22 @@ class sdist_maemo(Command):
                     self.section,
                     self.distribution.get_maintainer(),
                     self.distribution.get_maintainer_email(),
-                    self.XB_Maemo_Display_Name,
                     self.architecture,
                     self.depends,
                     self.suggests,
                     self.description,
                     self.long_description,
-                    self.XB_Maemo_Upgrade_Description,
-                    self.XSBC_Bugtracker,
-                    self.XB_Maemo_Icon_26,
                     self.conflicts,
                     self.replaces,
+
+                    optionnal = {
+                        'XB-Maemo-Display-Name':self.Maemo_Display_Name,
+                        'XB-Maemo-Upgrade-Description':self.Maemo_Upgrade_Description,
+                        'XSBC-Bugtracker':self.Maemo_Bugtracker,
+                        'XB-Maemo-Icon-26':self.getIconContent(self.Maemo_Icon_26),
+                        'XB-Maemo-Flags':self.Maemo_Flags,
+                        'XB-Meego-Desktop-Entry-Filename':self.MeeGo_Desktop_Entry_Filename
+                        }
                     )
         open(os.path.join(DEBIAN_DIR,"control"),"w").write(unicode(control.getContent()).encode('utf-8'))
 
