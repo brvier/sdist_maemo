@@ -13,7 +13,7 @@ for fpath in glob.glob('*/*.py[c|o]'):
 from sdist_maemo import sdist_maemo as _sdist_maemo
 from distutils.core import setup
 from sdist_maemo import sdist_maemo
-setup(name='python-sdist_ maemo',
+setup(name='python-sdist_maemo',
       version=sdist_maemo.__version__,
 
       license='GNU GPLv3',
