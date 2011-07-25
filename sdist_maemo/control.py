@@ -33,7 +33,6 @@ Architecture: %(arch)s""" % {'name':name,
                     'section':section,
                     'maintainer':maintainer,
                     'email':email,
-                    'display_name':display_name,
                     'arch':arch,}
 
         if depends:
@@ -47,9 +46,9 @@ Architecture: %(arch)s""" % {'name':name,
         if description:
             self.control = self.control + '\nDescription: %s' % description
 
-        for key, value in optionnal:
-            if key and value:
-                self.control = self.control + '\n%s: %s' % (key, value)
+        for key in optionnal:
+            if key and optionnal[key]:
+                self.control = self.control + '\n%s: %s' % (key, optionnal[key])
 
     def getContent(self):
         print self.control
