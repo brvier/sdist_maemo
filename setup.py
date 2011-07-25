@@ -13,7 +13,7 @@ for fpath in glob.glob('*/*.py[c|o]'):
 from sdist_maemo import sdist_maemo as _sdist_maemo
 from distutils.core import setup
 from sdist_maemo import sdist_maemo
-setup(name='python-sdist_maemo',
+setup(name='python-sdist_ maemo',
       version=sdist_maemo.__version__,
 
       license='GNU GPLv3',
@@ -28,13 +28,13 @@ setup(name='python-sdist_maemo',
       packages= ['sdist_maemo',],
       cmdclass={'sdist_maemo': _sdist_maemo},
       options = { 'sdist_maemo':{
-      'buildversion':'2',
+      'buildversion':'3',
       'depends':'python2.5|python2.6, python-setuptools',
       'Maemo_Bugtracker':'http://khertan.net/sdist_maemo:bugs',
       'Maemo_Display_Name':'Python sdist_maemo',
       'Maemo_Icon_26':'',
       'Maemo_Flags':'',
-      'changelog':'* Append some flags for Harmattan and change maemo flag names',
+      'changelog':'Append some flags for Harmattan and change maemo flag names',
       'copyright':'gpl'},},
       classifiers=[
         "Development Status :: 4 - Beta",
