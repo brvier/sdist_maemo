@@ -28,7 +28,7 @@ setup(name='python-sdist_maemo',
       packages= ['sdist_maemo',],
       cmdclass={'sdist_maemo': _sdist_maemo},
       options = { 'sdist_maemo':{
-      'buildversion':'3',
+      'buildversion':'4',
       'depends':'python2.5|python2.6, python-setuptools',
       'Maemo_Bugtracker':'http://khertan.net/sdist_maemo:bugs',
       'Maemo_Display_Name':'Python sdist_maemo',
