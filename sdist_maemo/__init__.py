@@ -95,12 +95,15 @@ class sdist_maemo(Command):
                      "Conflicts package"),
                     ('copyright=', None,
                      "Licence copyright"),
+                    ('install-purelib=', None,
+                     "Override the module install path to allow packaging from alternative platforms"),
                     ('dist-dir=', 'd',
                      "directory to put the source distribution archive(s) in [default: dist]"),
                    ]
 
     def initialize_options (self):
         self.dist_dir = None
+        self.install_purelib = None
         self.debian_package = None
         self.build_dir = None
         self.section = None
@@ -258,6 +261,8 @@ class sdist_maemo(Command):
         self.bdist_dir = DATA_DIR
         install = self.reinitialize_command('install', reinit_subcommands=1)
         install.root = self.bdist_dir
+        if self.install_purelib is not None:
+            install.install_purelib = self.install_purelib
         install.skip_build = 0
         install.warn_dir = 1
 
