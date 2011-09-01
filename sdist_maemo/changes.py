@@ -35,7 +35,7 @@ class Changes(object):
         if self.description:
             description=self.description.replace("\n","\n ")
             content.append('Description: ')
-            content.append('\n  %s' % description)
+            content.append('  %s' % description)
 
         if self.changes:
             changes=self.changes.replace("\n","\n ")
